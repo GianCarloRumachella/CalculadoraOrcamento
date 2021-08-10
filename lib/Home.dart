@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:calc_orcamento/bloc/CalcBloc.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -8,8 +9,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  CalcBloc calcBloc = CalcBloc();
+
   @override
   Widget build(BuildContext context) {
+    //calcBloc.criarUsuario("giancarlo.rumachella@gmail.com", "123456");
+    //calcBloc.verficaUsuarioLogado();
+    //calcBloc.logaUsuario("giancarlo.rumachella@gmail.com", "123456");
+    //calcBloc.deslogaUsuario();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Calculadora de Orçamento"),
