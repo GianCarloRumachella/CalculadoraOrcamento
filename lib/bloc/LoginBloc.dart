@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-class CalcBloc {
+class LoginBloc {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   criarUsuario(String email, String senha) {
@@ -14,7 +14,7 @@ class CalcBloc {
   }
 
   verficaUsuarioLogado() async {
-    User? usuarioAtual = await auth.currentUser;
+    User? usuarioAtual =  auth.currentUser;
 
     if (usuarioAtual != null) {
       print("usuario logado: ${usuarioAtual.email}");
