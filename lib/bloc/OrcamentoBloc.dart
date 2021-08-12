@@ -30,4 +30,14 @@ class OrcamentoBloc {
         .doc(idItem)
         .delete();
   }
+
+  double calculaValorUnitario(double valor, double quantidade) {
+    double valorUnitario = valor / quantidade;
+    return double.parse(valorUnitario.toStringAsFixed(2));
+  }
+
+//** ACHAR UM NOME MELHOR PQ ESSE TA RUIM */
+  double calculaValorReal(double valorUnitario ,double quantidadeNecessaria){
+     return double.parse((valorUnitario * quantidadeNecessaria).toStringAsFixed(2));
+  }
 }
