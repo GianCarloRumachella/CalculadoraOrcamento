@@ -1,10 +1,10 @@
 class ItemOrcamento {
-  String? _nome;
-  int? _quantidade;
-  double? _valor;
-  double? _quantidadeNecessaria;
-  double? valorUnitario;
-  double? valorReal;
+  String _nome;
+  int _quantidade;
+  double _valor;
+  double _quantidadeNecessaria;
+  double valorUnitario;
+  double valorReal;
   //PENSAR EM UM NOME MELHOR, PQ ESSE SÓ PELA HORA DA MORTE
 
   ItemOrcamento(
@@ -16,20 +16,20 @@ class ItemOrcamento {
     this.valorReal,
   });
 
-  String? get nome => this._nome;
-  set nome(String? value) => this._nome = value;
+  String get nome => this._nome;
+  set nome(String value) => this._nome = value;
 
-  int? get quantidade => this._quantidade;
-  set quantidade(int? value) => this._quantidade = value;
+  int get quantidade => this._quantidade;
+  set quantidade(int value) => this._quantidade = value;
 
-  double? get valor => this._valor;
-  set valor(double? value) => this._valor = value;
+  double get valor => this._valor;
+  set valor(double value) => this._valor = value;
 
   get quantidadeNecessaria => this._quantidadeNecessaria;
   set quantidadeNecessaria(value) => this._quantidadeNecessaria = value;
 
-  double? get getValorReal => this.valorReal;
-  set setValorReal(double? valorReal) => this.valorReal = valorReal;
+  double get getValorReal => this.valorReal;
+  set setValorReal(double valorReal) => this.valorReal = valorReal;
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {

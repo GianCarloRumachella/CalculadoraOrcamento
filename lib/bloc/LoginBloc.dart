@@ -14,7 +14,7 @@ class LoginBloc {
   }
 
   verficaUsuarioLogado() async {
-    User? usuarioAtual =  auth.currentUser;
+    User usuarioAtual =  auth.currentUser;
 
     if (usuarioAtual != null) {
       print("usuario logado: ${usuarioAtual.email}");
