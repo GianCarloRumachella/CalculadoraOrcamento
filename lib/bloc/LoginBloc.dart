@@ -1,7 +1,13 @@
+import 'package:calc_orcamento/Home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class LoginBloc {
   FirebaseAuth auth = FirebaseAuth.instance;
+
+//** VERIFICAR SE USUARIO E SENHA SÃO VALIDOS */
+
 
   criarUsuario(String email, String senha) {
     auth
@@ -13,17 +19,19 @@ class LoginBloc {
     });
   }
 
-  verficaUsuarioLogado() async {
+  Future<bool> verficaUsuarioLogado() async {
     User usuarioAtual =  auth.currentUser;
 
     if (usuarioAtual != null) {
       print("usuario logado: ${usuarioAtual.email}");
+      return true;
     } else {
       print("usuario deslogado");
+      return false;
     }
   }
 
-  logaUsuario(String email, String senha) {
+   logaUsuario(String email, String senha, context) {
     auth
         .signInWithEmailAndPassword(
       email: email,
@@ -31,8 +39,11 @@ class LoginBloc {
     )
         .then((firebaseUser) {
       print("usuario logado");
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> Home()));
+
     }).catchError((erro) {
       print("erro ao logar o usuario" + erro.toString());
+      
     });
   }
 
