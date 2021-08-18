@@ -15,17 +15,22 @@ class _LoginState extends State<Login> {
   TextEditingController _senhaController = TextEditingController();
   LoginBloc _loginBloc = LoginBloc();
 
+  bool _loginEmProgresso = false;
+  String _mensagemErro = "";
+
   @override
   void initState() {
     super.initState();
-   
+
     _checaSeUsuarioEstaLogado();
   }
 
   _checaSeUsuarioEstaLogado() async {
-    if (await _loginBloc.verficaUsuarioLogado()) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    if (await _loginBloc.verficaUsuarioLogado(context)) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
     } else {
+      print("usuario não logado");
       /* Navigator.push(
           context, MaterialPageRoute(builder: (context) => Cadastro())); */
     }
@@ -86,28 +91,51 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.teal,
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(21),
-                  ),
-                ),
-              ),
+            !_loginEmProgresso
+                ? ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.teal,
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(21),
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_loginBloc.validaLogin(
+                          _emailController.text, _senhaController.text)) {
+                        setState(() {
+                          _loginBloc.logaUsuario(_emailController.text,
+                              _senhaController.text, context);
+                          _loginEmProgresso = true;
+                        });
+                      } else {
+                        setState(() {
+                          _mensagemErro = "E-mail ou senha inválidos";
+                        });
+                      }
+                    },
+                  )
+                : Container(),
+            _loginEmProgresso ? CircularProgressIndicator() : Container(),
+            TextButton(
               child: Text(
-                "Login",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
+                "Cadastre-se",
+                style: TextStyle(color: Colors.grey),
               ),
               onPressed: () {
-                _loginBloc.logaUsuario(
-                    _emailController.text, _senhaController.text, context);
+                print("Ir para tela de cadastro");
               },
             ),
+            Text(_mensagemErro),
           ],
         ),
       ),

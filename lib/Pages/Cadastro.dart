@@ -10,6 +10,8 @@ class Cadastro extends StatefulWidget {
 class _CadastroState extends State<Cadastro> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      child: Text("TELA DE CADASTRO"),
+    );
   }
 }

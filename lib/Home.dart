@@ -1,3 +1,4 @@
+import 'package:calc_orcamento/Pages/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
@@ -10,8 +11,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  LoginBloc calcBloc = LoginBloc();
-  OrcamentoBloc orcBloc = OrcamentoBloc();
+  LoginBloc _loginBloc = LoginBloc();
+  OrcamentoBloc _orcBloc = OrcamentoBloc();
+
+  List<String> itensMenu = ["Configurações", "Sair"];
+
+  _escolhaMenuItem(String itemEscolhido) async {
+    switch (itemEscolhido) {
+      case "Configurações":
+        print("configurações selecionada");
+        break;
+      case "Sair":
+        await _loginBloc.deslogaUsuario(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +45,19 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Calculadora de Orçamento"),
+        actions: [
+          PopupMenuButton(
+            onSelected: _escolhaMenuItem,
+            itemBuilder: (context) {
+              return itensMenu.map((String item) {
+                return PopupMenuItem<String>(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Container(
