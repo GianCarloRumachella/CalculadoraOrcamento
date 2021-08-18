@@ -30,9 +30,9 @@ class _LoginState extends State<Login> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Home()));
     } else {
-      print("usuario não logado");
-      /* Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Cadastro())); */
+      /* print("usuario não logado");
+       Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Cadastro()));  */
     }
   }
 
@@ -132,7 +132,12 @@ class _LoginState extends State<Login> {
                 style: TextStyle(color: Colors.grey),
               ),
               onPressed: () {
-                print("Ir para tela de cadastro");
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Cadastro(),
+                  ),
+                );
               },
             ),
             Text(_mensagemErro),

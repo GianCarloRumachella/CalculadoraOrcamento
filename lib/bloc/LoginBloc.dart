@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 class LoginBloc {
   FirebaseAuth auth = FirebaseAuth.instance;
 
-//** VERIFICAR SE USUARIO E SENHA SÃO VALIDOS */
-
-  criarUsuario(String email, String senha) {
+  criaUsuario(String email, String senha) {
     auth
         .createUserWithEmailAndPassword(email: email, password: senha)
         .then((firebaseUser) {
