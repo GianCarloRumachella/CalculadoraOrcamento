@@ -1,8 +1,12 @@
 import 'package:calc_orcamento/model/ItemOrcamento.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OrcamentoBloc {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  User get usuario => auth.currentUser;
 
   criaOrcamento(String nomeOrcamento, Map<String, dynamic> itensOrcamento) {
     db
@@ -17,7 +21,7 @@ class OrcamentoBloc {
     Map<String, dynamic> itemParaAdicionar,
   ) {
     db
-        .collection("orcamento")
+        .collection(usuario.email)
         .doc(nomeOrcamento)
         .collection("itens")
         .add(itemParaAdicionar);
@@ -25,16 +29,19 @@ class OrcamentoBloc {
 
   deletaItemOrcamento(String idItem, String nomeOrcamento) {
     db
-        .collection("orcamento")
+        .collection(usuario.email)
         .doc(nomeOrcamento)
         .collection("itens")
         .doc(idItem)
         .delete();
   }
 
-  Future recuperaOrcamento(String nomeOrcamento) async {
+  Future<List<ItemOrcamento>> recuperaOrcamento(String nomeOrcamento) async {
+   
+    List<ItemOrcamento> itensOrcamento = [];
+
     QuerySnapshot querySnapshot = await db
-        .collection("orcamento")
+        .collection(usuario.email)
         .doc(nomeOrcamento)
         .collection("itens")
         .get();
@@ -44,13 +51,15 @@ class OrcamentoBloc {
         documento["quantidade"],
         documento["valor"],
         documento["quantidadeNecessaria"],
+        valorUnitario: documento["valorUnitario"],
+        valorReal: documento["valorReal"],
       );
-      //itemOrcamento.nome = "xalala";
+      
+      itensOrcamento.add(itemOrcamento);
       print(itemOrcamento.toMap());
-
-      //adicionaItemOrcamento(nomeOrcamento, itemOrcamento.toMap());
     }
-    
+
+    return itensOrcamento;
   }
 
   double calculaValorUnitario(double valor, double quantidade) {
@@ -62,5 +71,33 @@ class OrcamentoBloc {
   double calculaValorReal(double valorUnitario, double quantidadeNecessaria) {
     return double.parse(
         (valorUnitario * quantidadeNecessaria).toStringAsFixed(2));
+  }
+
+  //**REFATORAR POSTERIORMENTE ACHAR BONS NOMES PARA AS VARIAVEIS, PQ SÓ POR DEUS MESMO */
+  ItemOrcamento trataDados(String nome, String quantidade, String valor,
+      String quantidadeNecessaria) {
+    double quantidadeDouble;
+    double valorDouble,
+        quantidadeNecessariaDouble,
+        valorUnitarioDouble,
+        valorRealDouble;
+
+    if (nome.isNotEmpty ||
+        quantidade.isNotEmpty ||
+        valor.isNotEmpty ||
+        quantidadeNecessaria.isNotEmpty) {
+      quantidadeDouble = double.parse(quantidade);
+      valorDouble = double.parse(valor);
+      quantidadeNecessariaDouble = double.parse(quantidadeNecessaria);
+      valorUnitarioDouble = calculaValorUnitario(valorDouble, quantidadeDouble);
+      valorRealDouble =
+          calculaValorReal(valorUnitarioDouble, quantidadeNecessariaDouble);
+
+      return ItemOrcamento(
+          nome, quantidadeDouble, valorDouble, quantidadeNecessariaDouble,
+          valorUnitario: valorUnitarioDouble, valorReal: valorRealDouble);
+    } else {
+      return null;
+    }
   }
 }

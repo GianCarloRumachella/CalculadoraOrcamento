@@ -1,6 +1,6 @@
 class ItemOrcamento {
   String _nome;
-  int _quantidade;
+  double _quantidade;
   double _valor;
   double _quantidadeNecessaria;
   double valorUnitario;
@@ -19,8 +19,8 @@ class ItemOrcamento {
   String get nome => this._nome;
   set nome(String value) => this._nome = value;
 
-  int get quantidade => this._quantidade;
-  set quantidade(int value) => this._quantidade = value;
+  double get quantidade => this._quantidade;
+  set quantidade(double value) => this._quantidade = value;
 
   double get valor => this._valor;
   set valor(double value) => this._valor = value;

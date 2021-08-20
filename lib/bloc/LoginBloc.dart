@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 class LoginBloc {
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  User get usuario => auth.currentUser;
+
   criaUsuario(String email, String senha) {
     auth
         .createUserWithEmailAndPassword(email: email, password: senha)

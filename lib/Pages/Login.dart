@@ -52,6 +52,7 @@ class _LoginState extends State<Login> {
                 controller: _emailController,
                 autofocus: true,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -118,6 +119,7 @@ class _LoginState extends State<Login> {
                           _loginEmProgresso = true;
                         });
                       } else {
+                        _loginEmProgresso = false;
                         setState(() {
                           _mensagemErro = "E-mail ou senha inválidos";
                         });
@@ -132,7 +134,7 @@ class _LoginState extends State<Login> {
                 style: TextStyle(color: Colors.grey),
               ),
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => Cadastro(),
