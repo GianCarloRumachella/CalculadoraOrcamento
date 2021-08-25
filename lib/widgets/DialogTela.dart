@@ -1,3 +1,4 @@
+import 'package:calc_orcamento/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:calc_orcamento/widgets/Botao.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
@@ -103,6 +104,8 @@ class DialogTela extends StatelessWidget {
             _valorController.clear();
             _quantidadeController.clear();
             Navigator.pop(context);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Home()));
           },
         ),
       ],

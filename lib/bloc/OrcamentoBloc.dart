@@ -24,7 +24,8 @@ class OrcamentoBloc {
         .collection(usuario.email)
         .doc(nomeOrcamento)
         .collection("itens")
-        .add(itemParaAdicionar);
+        .doc(itemParaAdicionar["nome"])
+        .set(itemParaAdicionar);
   }
 
   deletaItemOrcamento(String idItem, String nomeOrcamento) {

@@ -81,14 +81,13 @@ class _HomeState extends State<Home> {
 
     List<ItemOrcamento> tempList = await _orcBloc.recuperaOrcamento("teste");
 
-    print("tamanho da lista de itens do orçamento: " +
-        tempList.length.toString());
-
     for (var item in tempList) {
       _rowList.add(
         DataRow(
           cells: <DataCell>[
-            DataCell(Text(item.nome)),
+            DataCell(Text(item.nome), onTap: () {
+              _atualizaTela(item.nome, "teste");
+            }),
             DataCell(Text(item.quantidade.toString())),
             DataCell(Text(item.valor.toString())),
             DataCell(Text(item.quantidadeNecessaria.toString())),
@@ -101,6 +100,11 @@ class _HomeState extends State<Home> {
 
     setState(() {});
     tempList.clear();
+  }
+
+  _atualizaTela(String id, String nomeOrcamento) async {
+    await _orcBloc.deletaItemOrcamento(id, nomeOrcamento);
+    _criaRows();
   }
 
   @override
@@ -141,12 +145,6 @@ class _HomeState extends State<Home> {
                     labelBotao2: "Cancelar",
                   );
                 });
-          },
-        ),
-        Botao(
-          label: "teste",
-          onPressed: () {
-            _criaRows();
           },
         ),
       ],
