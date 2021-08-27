@@ -1,5 +1,7 @@
+import 'package:calc_orcamento/model/DialogEnum.dart';
 import 'package:calc_orcamento/model/ItemOrcamento.dart';
 import 'package:calc_orcamento/widgets/Botao.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
@@ -86,9 +88,13 @@ class _HomeState extends State<Home> {
         DataRow(
           cells: <DataCell>[
             DataCell(Text(item.nome), onTap: () {
-              _atualizaTela(item.nome, "teste");
+              _showDialogExclusao(item.nome, "teste");
             }),
-            DataCell(Text(item.quantidade.toString())),
+            DataCell(Text(item.quantidade.toString()), onTap: () async {
+              ItemOrcamento itemTemp =
+                  await _orcBloc.recuperaItemOrcamento(item.nome, "teste");
+              _showDialogEdit(itemTemp);
+            }),
             DataCell(Text(item.valor.toString())),
             DataCell(Text(item.quantidadeNecessaria.toString())),
             DataCell(Text(item.valorUnitario.toString())),
@@ -102,9 +108,34 @@ class _HomeState extends State<Home> {
     tempList.clear();
   }
 
-  _atualizaTela(String id, String nomeOrcamento) async {
-    await _orcBloc.deletaItemOrcamento(id, nomeOrcamento);
-    _criaRows();
+  _showDialogExclusao(String nomeItem, String nomeOrcamento) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DialogTela(
+          labelBotao1: "Sim",
+          labelBotao2: "Não",
+          nomeAlert: "Deseja excluir $nomeItem ?",
+          dialogEnum: DialogEnum.exclusao,
+          corpoMensagem: nomeItem,
+        );
+      },
+    );
+  }
+
+  _showDialogEdit(ItemOrcamento item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DialogTela(
+          labelBotao1: "Salvar",
+          labelBotao2: "Cancelar",
+          nomeAlert: "Editar ${item.nome}",
+          dialogEnum: DialogEnum.completa,
+          itemOrcamento: item,
+        );
+      },
+    );
   }
 
   @override
@@ -143,6 +174,7 @@ class _HomeState extends State<Home> {
                     nomeAlert: "Inserindo itens",
                     labelBotao1: "salvar",
                     labelBotao2: "Cancelar",
+                    dialogEnum: DialogEnum.completa,
                   );
                 });
           },

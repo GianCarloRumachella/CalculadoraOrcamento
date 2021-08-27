@@ -37,8 +37,31 @@ class OrcamentoBloc {
         .delete();
   }
 
+  Future<ItemOrcamento> recuperaItemOrcamento(
+      String idItem, String nomeOrcamento) async {
+    var item = await db
+        .collection(usuario.email)
+        .doc(nomeOrcamento)
+        .collection("itens")
+        .doc(idItem)
+        .get();
+
+    ItemOrcamento itemOrcamento = ItemOrcamento(
+      item["nome"],
+      item["quantidade"],
+      item["valor"],
+      item["quantidadeNecessaria"],
+      valorUnitario: calculaValorUnitario(item["valor"], item["quantidade"]),
+      valorReal: calculaValorReal(
+        calculaValorUnitario(item["valor"], item["quantidade"]),
+        item["quantidadeNecessaria"],
+      ),
+    );
+
+    return itemOrcamento;
+  }
+
   Future<List<ItemOrcamento>> recuperaOrcamento(String nomeOrcamento) async {
-   
     List<ItemOrcamento> itensOrcamento = [];
 
     QuerySnapshot querySnapshot = await db
@@ -55,7 +78,7 @@ class OrcamentoBloc {
         valorUnitario: documento["valorUnitario"],
         valorReal: documento["valorReal"],
       );
-      
+
       itensOrcamento.add(itemOrcamento);
       print(itemOrcamento.toMap());
     }
@@ -83,22 +106,24 @@ class OrcamentoBloc {
         valorUnitarioDouble,
         valorRealDouble;
 
-    if (nome.isNotEmpty ||
-        quantidade.isNotEmpty ||
-        valor.isNotEmpty ||
-        quantidadeNecessaria.isNotEmpty) {
-      quantidadeDouble = double.parse(quantidade);
-      valorDouble = double.parse(valor);
-      quantidadeNecessariaDouble = double.parse(quantidadeNecessaria);
-      valorUnitarioDouble = calculaValorUnitario(valorDouble, quantidadeDouble);
-      valorRealDouble =
-          calculaValorReal(valorUnitarioDouble, quantidadeNecessariaDouble);
+    nome.isEmpty ? nome = "" : nome;
+    quantidade.isEmpty
+        ? quantidadeDouble = 0
+        : quantidadeDouble = double.parse(quantidade);
 
-      return ItemOrcamento(
-          nome, quantidadeDouble, valorDouble, quantidadeNecessariaDouble,
-          valorUnitario: valorUnitarioDouble, valorReal: valorRealDouble);
-    } else {
-      return null;
-    }
+    valor.isEmpty ? valorDouble = 0 : valorDouble = double.parse(valor);
+
+    quantidadeNecessaria.isEmpty
+        ? quantidadeNecessariaDouble = 0
+        : quantidadeNecessariaDouble = double.parse(quantidadeNecessaria);
+
+    valorUnitarioDouble = calculaValorUnitario(valorDouble, quantidadeDouble);
+
+    valorRealDouble =
+        calculaValorReal(valorUnitarioDouble, quantidadeNecessariaDouble);
+
+    return ItemOrcamento(
+        nome, quantidadeDouble, valorDouble, quantidadeNecessariaDouble,
+        valorUnitario: valorUnitarioDouble, valorReal: valorRealDouble);
   }
 }
