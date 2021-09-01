@@ -6,14 +6,25 @@ class OrcamentoBloc {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  String nomeOrcamento;
+  List<String> listaOrcamentos = [];
+
   User get usuario => auth.currentUser;
 
-  criaOrcamento(String nomeOrcamento, Map<String, dynamic> itensOrcamento) {
+  criaOrcamento(String nomeOrcamento) {
+    ItemOrcamento item = ItemOrcamento(
+      "teste",
+      0,
+      0,
+      0,
+    );
+    print("NOME DO ORCAMENTO: " + nomeOrcamento);
     db
-        .collection("orcamento")
+        .collection(usuario.email)
         .doc(nomeOrcamento)
-        .collection("itens")
-        .add(itensOrcamento);
+        /* .collection("itens")
+        .doc("teste") */
+        .set(item.toMap());
   }
 
   adicionaItemOrcamento(
@@ -61,7 +72,23 @@ class OrcamentoBloc {
     return itemOrcamento;
   }
 
-  Future<List<ItemOrcamento>> recuperaOrcamento(String nomeOrcamento) async {
+  recuperaOrcamentosNovo() {
+    var orcamentos =  db.collection(usuario.email).snapshots();
+    return orcamentos;
+  }
+
+  void recuperaOrcamentos() async {
+    QuerySnapshot orcamentos = await db.collection(usuario.email).get();
+
+    for (DocumentSnapshot documentSnapshot in orcamentos.docs) {
+      listaOrcamentos.add(documentSnapshot.data().toString());
+    }
+
+    print("QUANTIDADE DE ORÇAMENTOS: " + listaOrcamentos.length.toString());
+  }
+
+  Future<List<ItemOrcamento>> recuperaItensOrcamento(
+      String nomeOrcamento) async {
     List<ItemOrcamento> itensOrcamento = [];
 
     QuerySnapshot querySnapshot = await db

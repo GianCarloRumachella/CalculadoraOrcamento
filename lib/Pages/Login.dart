@@ -1,4 +1,4 @@
-import 'package:calc_orcamento/Home.dart';
+import 'package:calc_orcamento/Pages/Home.dart';
 import 'package:calc_orcamento/Pages/Cadastro.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:flutter/material.dart';
@@ -29,10 +29,6 @@ class _LoginState extends State<Login> {
     if (await _loginBloc.verficaUsuarioLogado(context)) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Home()));
-    } else {
-      /* print("usuario não logado");
-       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Cadastro()));  */
     }
   }
 

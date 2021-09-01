@@ -1,28 +1,26 @@
 import 'package:calc_orcamento/model/DialogEnum.dart';
 import 'package:calc_orcamento/model/ItemOrcamento.dart';
 import 'package:calc_orcamento/widgets/Botao.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
 import 'package:calc_orcamento/widgets/DialogTela.dart';
 import 'package:flutter/rendering.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key key}) : super(key: key);
+class Orcamento extends StatefulWidget {
+  final String nomeOrcamento;
+  const Orcamento({Key key, @required this.nomeOrcamento}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _OrcamentoState createState() => _OrcamentoState();
 }
 
-class _HomeState extends State<Home> {
+class _OrcamentoState extends State<Orcamento> {
   LoginBloc _loginBloc = LoginBloc();
   OrcamentoBloc _orcBloc = OrcamentoBloc();
 
   List<String> itensMenu = ["Configurações", "Sair"];
   List<DataRow> _rowList = [];
-
-  DialogTela dialog = DialogTela();
 
   _escolhaMenuItem(String itemEscolhido) async {
     switch (itemEscolhido) {
@@ -81,18 +79,19 @@ class _HomeState extends State<Home> {
   _criaRows() async {
     _rowList.clear();
 
-    List<ItemOrcamento> tempList = await _orcBloc.recuperaOrcamento("teste");
+    List<ItemOrcamento> tempList =
+        await _orcBloc.recuperaItensOrcamento(widget.nomeOrcamento);
 
     for (var item in tempList) {
       _rowList.add(
         DataRow(
           cells: <DataCell>[
             DataCell(Text(item.nome), onTap: () {
-              _showDialogExclusao(item.nome, "teste");
+              _showDialogExclusao(item.nome, widget.nomeOrcamento);
             }),
             DataCell(Text(item.quantidade.toString()), onTap: () async {
               ItemOrcamento itemTemp =
-                  await _orcBloc.recuperaItemOrcamento(item.nome, "teste");
+                  await _orcBloc.recuperaItemOrcamento(item.nome, widget.nomeOrcamento);
               _showDialogEdit(itemTemp);
             }),
             DataCell(Text(item.valor.toString())),
@@ -148,7 +147,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Calculadora de Orçamento"),
+        title: Text("Orçamento de ${widget.nomeOrcamento}"),
         actions: [
           PopupMenuButton(
             onSelected: _escolhaMenuItem,
@@ -175,6 +174,7 @@ class _HomeState extends State<Home> {
                     labelBotao1: "salvar",
                     labelBotao2: "Cancelar",
                     dialogEnum: DialogEnum.completa,
+                    corpoMensagem: widget.nomeOrcamento,
                   );
                 });
           },
