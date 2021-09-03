@@ -1,4 +1,5 @@
 import 'package:calc_orcamento/model/ItemOrcamento.dart';
+import 'package:calc_orcamento/model/listaOrcamentos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,19 +13,9 @@ class OrcamentoBloc {
   User get usuario => auth.currentUser;
 
   criaOrcamento(String nomeOrcamento) {
-    ItemOrcamento item = ItemOrcamento(
-      "teste",
-      0,
-      0,
-      0,
-    );
+    ListaOrcamentos item = ListaOrcamentos(nomeOrcamento);
     print("NOME DO ORCAMENTO: " + nomeOrcamento);
-    db
-        .collection(usuario.email)
-        .doc(nomeOrcamento)
-        /* .collection("itens")
-        .doc("teste") */
-        .set(item.toMap());
+    db.collection(usuario.email).doc(nomeOrcamento).set(item.toMap());
   }
 
   adicionaItemOrcamento(
@@ -72,19 +63,18 @@ class OrcamentoBloc {
     return itemOrcamento;
   }
 
-  recuperaOrcamentosNovo() {
-    var orcamentos =  db.collection(usuario.email).snapshots();
-    return orcamentos;
-  }
-
-  void recuperaOrcamentos() async {
+  Future<List<ListaOrcamentos>> recuperaOrcamentos() async {
+    List<ListaOrcamentos> listaOrcamentos = [];
     QuerySnapshot orcamentos = await db.collection(usuario.email).get();
 
     for (DocumentSnapshot documentSnapshot in orcamentos.docs) {
-      listaOrcamentos.add(documentSnapshot.data().toString());
+      ListaOrcamentos listaOrcamentosTemp =
+          ListaOrcamentos(documentSnapshot["nome"]);
+      listaOrcamentos.add(listaOrcamentosTemp);
+      print(listaOrcamentosTemp.toMap());
     }
 
-    print("QUANTIDADE DE ORÇAMENTOS: " + listaOrcamentos.length.toString());
+    return listaOrcamentos;
   }
 
   Future<List<ItemOrcamento>> recuperaItensOrcamento(

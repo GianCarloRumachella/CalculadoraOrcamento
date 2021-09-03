@@ -2,6 +2,7 @@ import 'package:calc_orcamento/Pages/Orcamento.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
 import 'package:calc_orcamento/model/DialogEnum.dart';
+import 'package:calc_orcamento/model/listaOrcamentos.dart';
 import 'package:calc_orcamento/widgets/Botao.dart';
 import 'package:calc_orcamento/widgets/DialogTela.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,7 @@ class _HomeState extends State<Home> {
   OrcamentoBloc _orcamentoBloc = OrcamentoBloc();
 
   List<String> itensMenu = ["Configurações", "Sair"];
+  List<ListaOrcamentos> listaOrcamentos = [];
 
   _escolhaMenuItem(String itemEscolhido) async {
     switch (itemEscolhido) {
@@ -33,12 +35,15 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     _pegaOrcamentos();
+    super.initState();
   }
 
-  List<String>_pegaOrcamentos(){
-    return _orcamentoBloc.listaOrcamentos;
+  _pegaOrcamentos() async {
+    listaOrcamentos = await _orcamentoBloc.recuperaOrcamentos();
+
+    //print("TEMPLIST: ${listaOrcamentos.length.toString()}");
+    setState(() {});
   }
 
   @override
@@ -76,36 +81,36 @@ class _HomeState extends State<Home> {
                 });
           },
         ),
+        Botao(
+          label: "teste",
+          onPressed: () {
+            _pegaOrcamentos();
+          },
+        ),
       ],
       body: Container(
         padding: EdgeInsets.all(16),
         child: Center(
-         /*  child: StreamBuilder(
-            stream: _orcamentoBloc.recuperaOrcamentosNovo(),
-            builder: (context, snapshot) {
-              QuerySnapshot querySnapshot = snapshot.data;
-              if (!snapshot.hasError) {
-                return ListView.builder(
-                  itemCount: querySnapshot.docs.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        _orcamentoBloc.listaOrcamentos[index],
-                      ),
-                    );
-                  },
-                );
-              } else {
-                Text("ERRO!!!");
-              }
-            },
-          ), */
-           child: ListView.builder(
-            itemCount: _pegaOrcamentos().length,
+          child: ListView.builder(
+            itemCount: listaOrcamentos.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  _pegaOrcamentos()[index],
+              return TextButton(
+                onPressed: () {
+                  _orcamentoBloc
+                      .criaOrcamento(listaOrcamentos[index].getNomeOrcamentos);
+                  String nomeOrcamento =
+                      listaOrcamentos[index].getNomeOrcamentos;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Orcamento(
+                        nomeOrcamento: nomeOrcamento,
+                      ),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  title: Text(listaOrcamentos[index].getNomeOrcamentos),
                 ),
               );
             },
