@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:calc_orcamento/model/ItemOrcamento.dart';
 import 'package:calc_orcamento/model/listaOrcamentos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,15 +9,25 @@ class OrcamentoBloc {
   FirebaseFirestore db = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  final _streamController = StreamController<List<String>>.broadcast();
+  Sink<List<String>> get streamSink => _streamController.sink;
+  Stream<List<String>> get orcamentoStream => _streamController.stream;
+
   String nomeOrcamento;
   List<String> listaOrcamentos = [];
 
   User get usuario => auth.currentUser;
 
+  void dispose() {
+    _streamController.close();
+  }
+
   criaOrcamento(String nomeOrcamento) {
     ListaOrcamentos item = ListaOrcamentos(nomeOrcamento);
     print("NOME DO ORCAMENTO: " + nomeOrcamento);
     db.collection(usuario.email).doc(nomeOrcamento).set(item.toMap());
+    listaOrcamentos.add(nomeOrcamento);
+    
   }
 
   adicionaItemOrcamento(
@@ -63,15 +75,15 @@ class OrcamentoBloc {
     return itemOrcamento;
   }
 
-  Future<List<ListaOrcamentos>> recuperaOrcamentos() async {
-    List<ListaOrcamentos> listaOrcamentos = [];
+  Future<List<String>> recuperaOrcamentos() async {
+    List<String> listaOrcamentos = [];
     QuerySnapshot orcamentos = await db.collection(usuario.email).get();
 
     for (DocumentSnapshot documentSnapshot in orcamentos.docs) {
-      ListaOrcamentos listaOrcamentosTemp =
-          ListaOrcamentos(documentSnapshot["nome"]);
-      listaOrcamentos.add(listaOrcamentosTemp);
-      print(listaOrcamentosTemp.toMap());
+      /* ListaOrcamentos listaOrcamentosTemp =
+          ListaOrcamentos(documentSnapshot["nome"]); */
+      listaOrcamentos.add(documentSnapshot.id);
+      //print(listaOrcamentosTemp.toMap());
     }
 
     return listaOrcamentos;

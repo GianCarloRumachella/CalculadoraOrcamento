@@ -2,11 +2,8 @@ import 'package:calc_orcamento/Pages/Orcamento.dart';
 import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
 import 'package:calc_orcamento/model/DialogEnum.dart';
-import 'package:calc_orcamento/model/listaOrcamentos.dart';
 import 'package:calc_orcamento/widgets/Botao.dart';
 import 'package:calc_orcamento/widgets/DialogTela.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -21,7 +18,7 @@ class _HomeState extends State<Home> {
   OrcamentoBloc _orcamentoBloc = OrcamentoBloc();
 
   List<String> itensMenu = ["Configurações", "Sair"];
-  List<ListaOrcamentos> listaOrcamentos = [];
+  List<String> listaOrcamentos = [];
 
   _escolhaMenuItem(String itemEscolhido) async {
     switch (itemEscolhido) {
@@ -39,10 +36,8 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-  _pegaOrcamentos() async {
+  Future<void> _pegaOrcamentos() async {
     listaOrcamentos = await _orcamentoBloc.recuperaOrcamentos();
-
-    //print("TEMPLIST: ${listaOrcamentos.length.toString()}");
     setState(() {});
   }
 
@@ -90,16 +85,15 @@ class _HomeState extends State<Home> {
       ],
       body: Container(
         padding: EdgeInsets.all(16),
-        child: Center(
+        child: RefreshIndicator(
+          onRefresh: () => _pegaOrcamentos(),
           child: ListView.builder(
             itemCount: listaOrcamentos.length,
             itemBuilder: (context, index) {
               return TextButton(
                 onPressed: () {
-                  _orcamentoBloc
-                      .criaOrcamento(listaOrcamentos[index].getNomeOrcamentos);
-                  String nomeOrcamento =
-                      listaOrcamentos[index].getNomeOrcamentos;
+                  _orcamentoBloc.criaOrcamento(listaOrcamentos[index]);
+                  String nomeOrcamento = listaOrcamentos[index];
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -110,7 +104,7 @@ class _HomeState extends State<Home> {
                   );
                 },
                 child: ListTile(
-                  title: Text(listaOrcamentos[index].getNomeOrcamentos),
+                  title: Text(listaOrcamentos[index]),
                 ),
               );
             },
