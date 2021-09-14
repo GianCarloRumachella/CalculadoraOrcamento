@@ -218,16 +218,7 @@ class DialogTela extends StatelessWidget {
             ),
             Botao(
               label: labelBotao1,
-              onPressed: () {
-                orcamentoBloc.deletaItemOrcamento(corpoMensagem, corpoMensagem);
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Orcamento(
-                              nomeOrcamento: corpoMensagem,
-                            )));
-              },
+              onPressed: onPressed,
             ),
           ],
         );

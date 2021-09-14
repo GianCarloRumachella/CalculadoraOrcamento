@@ -90,22 +90,38 @@ class _HomeState extends State<Home> {
           child: ListView.builder(
             itemCount: listaOrcamentos.length,
             itemBuilder: (context, index) {
-              return TextButton(
-                onPressed: () {
-                  _orcamentoBloc.criaOrcamento(listaOrcamentos[index]);
-                  String nomeOrcamento = listaOrcamentos[index];
+              return ListTile(
+                title: Text(listaOrcamentos[index]),
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => Orcamento(
-                        nomeOrcamento: nomeOrcamento,
+                        nomeOrcamento: listaOrcamentos[index],
                       ),
                     ),
                   );
                 },
-                child: ListTile(
-                  title: Text(listaOrcamentos[index]),
-                ),
+                onLongPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return DialogTela(
+                        dialogEnum: DialogEnum.exclusao,
+                        labelBotao1: "Sim",
+                        labelBotao2: "Não",
+                        nomeAlert: "Deseja excluir ${listaOrcamentos[index]}?",
+                        corpoMensagem: listaOrcamentos[index],
+                        onPressed: (){
+                          _orcamentoBloc.deletaOrcamento(listaOrcamentos[index]);
+                          _pegaOrcamentos();
+                          Navigator.pop(context);
+                        },
+                        
+                      );
+                    },
+                  );
+                },
               );
             },
           ),

@@ -27,7 +27,6 @@ class OrcamentoBloc {
     print("NOME DO ORCAMENTO: " + nomeOrcamento);
     db.collection(usuario.email).doc(nomeOrcamento).set(item.toMap());
     listaOrcamentos.add(nomeOrcamento);
-    
   }
 
   adicionaItemOrcamento(
@@ -49,6 +48,10 @@ class OrcamentoBloc {
         .collection("itens")
         .doc(idItem)
         .delete();
+  }
+
+  deletaOrcamento(String nomeOrcamento) {
+    db.collection(usuario.email).doc(nomeOrcamento).delete();
   }
 
   Future<ItemOrcamento> recuperaItemOrcamento(

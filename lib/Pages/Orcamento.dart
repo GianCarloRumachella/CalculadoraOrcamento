@@ -90,8 +90,8 @@ class _OrcamentoState extends State<Orcamento> {
               _showDialogExclusao(item.nome, widget.nomeOrcamento);
             }),
             DataCell(Text(item.quantidade.toString()), onTap: () async {
-              ItemOrcamento itemTemp =
-                  await _orcBloc.recuperaItemOrcamento(item.nome, widget.nomeOrcamento);
+              ItemOrcamento itemTemp = await _orcBloc.recuperaItemOrcamento(
+                  item.nome, widget.nomeOrcamento);
               _showDialogEdit(itemTemp);
             }),
             DataCell(Text(item.valor.toString())),
@@ -117,6 +117,11 @@ class _OrcamentoState extends State<Orcamento> {
           nomeAlert: "Deseja excluir $nomeItem ?",
           dialogEnum: DialogEnum.exclusao,
           corpoMensagem: nomeItem,
+          onPressed: () {
+            _orcBloc.deletaItemOrcamento(nomeItem, nomeOrcamento);
+            Navigator.pop(context);
+            _criaRows();
+          },
         );
       },
     );
