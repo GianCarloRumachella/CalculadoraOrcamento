@@ -6,6 +6,7 @@ import 'package:calc_orcamento/bloc/LoginBloc.dart';
 import 'package:calc_orcamento/bloc/OrcamentoBloc.dart';
 import 'package:calc_orcamento/widgets/DialogTela.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 class Orcamento extends StatefulWidget {
   final String nomeOrcamento;
@@ -18,6 +19,9 @@ class Orcamento extends StatefulWidget {
 class _OrcamentoState extends State<Orcamento> {
   LoginBloc _loginBloc = LoginBloc();
   OrcamentoBloc _orcBloc = OrcamentoBloc();
+  TextEditingController _lucroTextController = TextEditingController();
+  TextEditingController _valorOrcamentoTextController =
+      TextEditingController(text: "0.0");
 
   List<String> itensMenu = ["Configurações", "Sair"];
   List<DataRow> _rowList = [];
@@ -167,6 +171,45 @@ class _OrcamentoState extends State<Orcamento> {
           ),
         ],
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          //padding: EdgeInsets.all(32),
+          children: [
+            Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: _dataTable(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(64, 16, 64, 8),
+              child: TextField(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                controller: _lucroTextController,
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                autofocus: false,
+                decoration: InputDecoration(
+                  labelText: "Porcentagem",
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(64, 8, 64, 16),
+              child: TextField(
+                controller: _valorOrcamentoTextController,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.next,
+                autofocus: false,
+                enabled: false,
+                decoration: InputDecoration(
+                  labelText: "Valor Total",
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       persistentFooterButtons: [
         Botao(
           label: "Cadastrar Item",
@@ -184,15 +227,20 @@ class _OrcamentoState extends State<Orcamento> {
                 });
           },
         ),
+        Botao(
+          label: "Calcular Orçamento",
+          onPressed: () async{
+            double porcentagem = double.parse(_lucroTextController.text);
+            if (porcentagem <= 0) {
+              porcentagem = 1;
+            }
+           await  _orcBloc.calculaOrcamento(porcentagem, widget.nomeOrcamento);
+
+            _valorOrcamentoTextController.text =
+                (_orcBloc.valorFinal).toStringAsFixed(2);
+          },
+        ),
       ],
-      body: Container(
-        //padding: EdgeInsets.all(32),
-        child: Container(
-            child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: _dataTable(),
-        )),
-      ),
     );
   }
 }

@@ -15,6 +15,7 @@ class OrcamentoBloc {
 
   String nomeOrcamento;
   List<String> listaOrcamentos = [];
+  double valorFinal = 0;
 
   User get usuario => auth.currentUser;
 
@@ -157,5 +158,24 @@ class OrcamentoBloc {
     return ItemOrcamento(
         nome, quantidadeDouble, valorDouble, quantidadeNecessariaDouble,
         valorUnitario: valorUnitarioDouble, valorReal: valorRealDouble);
+  }
+
+  calculaOrcamento(double porcentagem, String nomeOrcamento) async {
+    List<ItemOrcamento> tempList = await recuperaItensOrcamento(nomeOrcamento);
+    valorFinal = 0;
+    
+    if (tempList.length == 0) {
+      print("ACRECENTE ITENS AO ORÇAMENTO!!!");
+    }
+
+    for (ItemOrcamento tempItem in tempList) {
+      valorFinal += tempItem.valorReal;
+    }
+
+    valorFinal = valorFinal + (valorFinal * (porcentagem / 100));
+
+    print("VALOR FINAL: $valorFinal");
+
+    return valorFinal;
   }
 }

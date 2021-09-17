@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void initState() {
+  void initState()  {
     _pegaOrcamentos();
     super.initState();
   }
@@ -76,12 +76,6 @@ class _HomeState extends State<Home> {
                 });
           },
         ),
-        Botao(
-          label: "teste",
-          onPressed: () {
-            _pegaOrcamentos();
-          },
-        ),
       ],
       body: Container(
         padding: EdgeInsets.all(16),
@@ -112,12 +106,12 @@ class _HomeState extends State<Home> {
                         labelBotao2: "Não",
                         nomeAlert: "Deseja excluir ${listaOrcamentos[index]}?",
                         corpoMensagem: listaOrcamentos[index],
-                        onPressed: (){
-                          _orcamentoBloc.deletaOrcamento(listaOrcamentos[index]);
+                        onPressed: () {
+                          _orcamentoBloc
+                              .deletaOrcamento(listaOrcamentos[index]);
                           _pegaOrcamentos();
                           Navigator.pop(context);
                         },
-                        
                       );
                     },
                   );

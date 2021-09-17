@@ -135,11 +135,13 @@ class DialogTela extends StatelessWidget {
                 _quantidadeController.clear();
                 Navigator.pop(context);
                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Orcamento(
-                              nomeOrcamento: corpoMensagem,
-                            )));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Orcamento(
+                      nomeOrcamento: corpoMensagem,
+                    ),
+                  ),
+                );
               },
             ),
           ],
@@ -157,6 +159,7 @@ class DialogTela extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                corpoMensagem != null ? Text(corpoMensagem) : Container(),
                 TextField(
                   controller: _nomeController,
                   keyboardType: TextInputType.name,
